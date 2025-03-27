@@ -61,6 +61,7 @@ int main()
                     }
                 }
         }
+        f[i][N + i] = 1; // gan he so cho bien phu trong bang simplex
         if (sign == -1) // bien doi tu bpt '>=' thanh bpt '<='
         {
             ValueOfConstrants[i] *= sign;
