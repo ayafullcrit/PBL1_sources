@@ -523,7 +523,6 @@ void TwoPhase()
         EndOfFunction();
         return;
     }
-    InitTheTable(); // khoi tao bang simplex
     Phase1();
     if (Phase == 2)
     {
