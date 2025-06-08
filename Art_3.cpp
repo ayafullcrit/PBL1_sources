@@ -51,13 +51,41 @@ vector<double> ValueOfConstrants;                                     // mang ch
 ifstream FileCin;                                                     // bien de luu file input
 int LeftMargin = 55;
 int TopMargin = 2;
+void ResetVariable()
+{
+    IsInput = 0;
+    IsFileInput = 0;
+    IsMax = 0;
+    IsPossible = 1;
+    NumOfConstrants = 0;
+    NumOfVariables = 0;
+    SubVariableIndex = 0;
+    ArtificalIndex = 0;
+    OutVector.clear();
+    VariableRow.clear();
+    VariableRow.resize(MAX + 1);
+    VariableCol.clear();
+    VariableCol.resize(MAX + 1);
+    ValueOfConstrants.clear();
+    ValueOfConstrants.resize(MAX + 1);
+    ArtificalRow.clear();
+    ArtificalRow.resize(MAX + 1);
+    SubRow.clear();
+    SubRow.resize(MAX + 1);
+    FOR(i, 1, M + 1)
+    FOR(j, 1, N + TotalSubVariable + 1)
+    f[i][j] = 0;
+}
 // ham bat event nhan phim
 bool HitKey()
 {
     while (1)
     {
         if (kbhit())
+        {
+            // char c = getch();
             return 1;
+        }
     }
     return 0;
 }
@@ -175,6 +203,7 @@ void EndOfFunction()
     if (HitKey())
     {
         ResetConsole();
+        fflush(stdin);
         return;
     }
 }
@@ -257,7 +286,7 @@ void InitTheTable()
     // Simplex method
     // in ra cac rang buoc da chuyen ve dang <=
     SetWordColor(0x09);
-    cout << "Tu de bai ta co: " << endl
+    cout << "Cac rang buoc: " << endl
          << endl;
     SetWordColor(0x0e);
     FOR(i, 0, OutVector.size() - 1)
@@ -360,7 +389,7 @@ void DoSimplex()
                 }
             }
         }
-    	SetWordColor(0x0b);
+        SetWordColor(0x0b);
         if (NegCol <= -1)
         {
             cout << endl
@@ -570,6 +599,21 @@ void TwoPhase()
         EndOfFunction();
         return;
     }
+    SetWordColor(0x03);
+    cout << "Yeu cau de bai:" << endl;
+    SetWordColor(0x0e);
+    if (IsMax)
+        cout << "Toi da hoa: ";
+    else
+        cout << "Toi thieu hoa: ";
+    cout << "Z = ";
+    FOR(i, 1, N)
+    {
+        cout << ZFactor[i] << "x" << i;
+        if(i < N) cout << " + ";
+    }
+    cout << endl;
+    cout << endl;
     InitTheTable(); // khoi tao bang simplex
     Phase1();
     if (Phase == 2)
@@ -577,29 +621,7 @@ void TwoPhase()
         Phase2();
     }
     // reset cac bien
-    IsInput = 0;
-    IsFileInput = 0;
-    IsMax = 0;
-    IsPossible = 1;
-    NumOfConstrants = 0;
-    NumOfVariables = 0;
-    SubVariableIndex = 0;
-    ArtificalIndex = 0;
-    OutVector.clear();
-    VariableRow.clear();
-    VariableRow.resize(MAX + 1);
-    VariableCol.clear();
-    VariableCol.resize(MAX + 1);
-    ValueOfConstrants.clear();
-    ValueOfConstrants.resize(MAX + 1);
-    ArtificalRow.clear();
-    ArtificalRow.resize(MAX + 1);
-    SubRow.clear();
-    SubRow.resize(MAX + 1);
-    FOR(i, 1, M + 1)
-    FOR(j, 1, N + TotalSubVariable + 1)
-    f[i][j] = 0;
-
+    ResetVariable();
     EndOfFunction();
 }
 Coord MouseCoord()
@@ -629,15 +651,17 @@ Coord MouseCoord()
 }
 void NotValid()
 {
-	system("cls");
-	SetWordColor(0x04);
+    system("cls");
+    SetWordColor(0x04);
     cout << "Nhap khong hop le!" << endl;
     Sleep(20);
-    if(IsFileInput)
+    if (IsFileInput)
     {
-    	FileCin.close();
-	}
-	cout << "An phim bat ky de quay lai!";
+        FileCin.close();
+    }
+    ResetVariable();
+    cout << "An phim bat ky de quay lai!";
+    fflush(stdin);
     EndOfFunction(); // quay lai nhap lai du lieu
     return;
 }
@@ -748,6 +772,8 @@ void IntegerInput(int &x)
 void NhapTuBanPhim()
 {
     system("cls");
+    if (!IsFileInput)
+        FileCin.close();
     IsInput = 1;
     string StrMax;
     SetWordColor(0x0e);
@@ -855,7 +881,7 @@ void NhapTuBanPhim()
                     if (TempStr.size() > 2)
                     {
                         NotValid(); // neu co qua nhieu ki tu trong xau rang buoc thi khong hop le
-                        return; 
+                        return;
                     }
                 }
                 else
@@ -881,7 +907,7 @@ void NhapTuBanPhim()
                         // chi so cua bien x la xau con tu xpos+1 den cuoi xau ki tu
                         double FactorValue;
                         stringstream FactorStream(Factor);
-                        FactorStream >> FactorValue; // chuyen he so sang kieu double
+                        FactorStream >> FactorValue;                        // chuyen he so sang kieu double
                         f[i][stoi(VariableIndex)] = PrepSign * FactorValue; // gan he so cua bien x vao bang simplex
                         // gan he so cho bien x trong bang simplex
                     }
@@ -966,9 +992,8 @@ void NhapTuFile()
     if (!FileCin)
     {
         SetWordColor(0x04);
-        cout << "Khong the mo file, vui long kiem tra lai ten file!" << endl;
-        cout << "An phim bat ki de quay lai!" << endl;
-        EndOfFunction();
+        FileCin.close();
+        NotValid();
         return;
     }
     NhapTuBanPhim();
@@ -983,7 +1008,7 @@ int main()
     while (1)
     {
         Coord click = MouseCoord();
-        if (click.se <  15 or click.se > 18)
+        if (click.se < 15 or click.se > 18)
             continue;
         if (click.fi < 55 or click.fi > 80)
             continue;
