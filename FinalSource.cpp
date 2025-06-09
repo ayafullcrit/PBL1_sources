@@ -402,8 +402,8 @@ void DoSimplex()
         // neu khong tim thay (bang toi uu) thi dung thuat toan
         if (NegCol <= -1)
             break;
-        cout << endl
-             << "Tren cot " << VariableCol[NegCol] << " co cac hang: " << endl;
+        bool FoundValidRow = 0;
+        cout << endl << endl;
         // tim hang co ti so nho nhat trong cot
         double Ratio = INT_MAX;
         int NegRow = -1;
@@ -414,6 +414,7 @@ void DoSimplex()
             double RatioI = f[i][LastRow] / (f[i][NegCol]);
             if (RatioI <= 0 + EPS)
                 continue; // neu ti so am thi bo qua
+            FoundValidRow = 1;
             cout << "Hang " << VariableRow[i] << " co ti so: " << f[i][LastRow] << "/" << f[i][NegCol] << " = " << f[i][LastRow] / f[i][NegCol] << endl;
             if (RatioI < Ratio)
             {
@@ -421,6 +422,11 @@ void DoSimplex()
                 NegRow = i;
             }
         }
+        if(!FoundValidRow) 
+		{
+			cout << "Khong tim duoc hang bien ra hop le!";
+		 	break;
+		 }
         cout << endl
              << "Hang co ti so nho nhat la: " << VariableRow[NegRow] << " = " << f[NegRow][LastRow] << "/" << f[NegRow][NegCol] << " = " << Ratio << endl;
         cout << "=> Bien ra la: " << VariableRow[NegRow] << endl;
@@ -485,7 +491,7 @@ void Phase1()
     if (!IsPossible)
     {
         SetWordColor(0x0b);
-        cout << "Sau Pha 1, Z = " << f[M + 1][N + TotalSubVariable + 1] << " != 0" << endl;
+        cout << "Sau Pha 1, khong loai bo duoc bien gia!" << endl;
         cout << "=> Bai toan khong co nghiem toi uu!" << endl;
         SetWordColor(0x09);
         cout << "An phim bat ki de quay lai!" << endl;
