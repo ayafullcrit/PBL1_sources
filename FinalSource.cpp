@@ -403,7 +403,7 @@ void DoSimplex()
         if (NegCol <= -1)
             break;
         bool FoundValidRow = 0;
-        cout << endl << endl;
+        cout << endl;
         // tim hang co ti so nho nhat trong cot
         double Ratio = INT_MAX;
         int NegRow = -1;
